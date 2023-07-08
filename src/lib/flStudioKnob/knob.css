@@ -1,0 +1,93 @@
+.fl-studio-knob.envelope-knob,
+.fl-studio-knob.tension-knob {
+  width: 80px;
+  height: auto;
+  display: block;
+  margin-bottom: 1em;
+}
+
+svg {
+  position: relative;
+  display: block
+}
+
+.fl-studio-knob.tension-knob {
+  padding: 10px;
+}
+
+.fl-studio-knob .knob-input__visual {
+  overflow: visible;
+}
+
+.fl-studio-knob .dial {
+  transform-origin: 20px 20px;
+  transition: all 600ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.fl-studio-knob .dial-highlight {
+  opacity: 0;
+  transition: all 300ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.fl-studio-knob:hover .dial,
+.fl-studio-knob.drag-active .dial {
+  transform: scale(0.9);
+  filter: brightness(2.2);
+  transition: all 300ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.fl-studio-knob:hover .dial-highlight,
+.fl-studio-knob.drag-active .dial-highlight {
+  opacity: 0.05;
+}
+
+.fl-studio-knob .focus-indicator {
+  opacity: 0;
+  transition: all 300ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.fl-studio-knob.focus-active .focus-indicator {
+  opacity: 0.8;
+}
+
+.knob-input {
+  position: relative;
+}
+
+.knob-input__visual {
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+.knob-input__input {
+  cursor: -webkit-grab;
+  cursor: grab;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: rotate(-90deg);
+}
+
+.knob-input__drag-active,
+.knob-input__drag-active * {
+  cursor: -webkit-grabbing !important;
+  cursor: grabbing !important;
+}
+
+.fl-studio-envelope__label {
+  position: relative;
+  flex: 0 0 auto;
+  display: block;
+  width: 80px;
+  color: #c1c5c5;
+  font-size: 10px;
+  font-family: "Helvetica", sans-serif;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}

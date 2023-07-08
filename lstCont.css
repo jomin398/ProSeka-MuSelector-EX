@@ -1,0 +1,137 @@
+.listCont {
+    grid-area: listCont;
+    overflow: hidden;
+    position: relative;
+    overflow: auto;
+}
+
+ul#list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.cover {
+    grid-area: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cover img {
+    width: 16em;
+    height: 16em;
+    object-fit: contain;
+    object-position: center;
+    border: 1px dashed #6d1515;
+}
+
+.cover img[src] {
+    border: none;
+}
+
+
+li.level {
+    height: 6em;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+li.level .lvImg {
+    width: 6em;
+    height: 6em;
+    min-width: 6em;
+    min-height: 6em;
+    object-fit: contain;
+}
+
+li.level .infoWrap {
+    width: 100%;
+    display: flex;
+    height: inherit;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 0 5px;
+    overflow: hidden;
+}
+
+.level .infoWrap .title {
+    font-size: 1.7em;
+}
+
+.infoWrap.title.maqree {
+    height: 1.5em;
+}
+
+.infoWrap .artist {
+    width: 100%;
+    font-size: 1em;
+    position: relative;
+    max-height: unset;
+}
+
+.level .infoWrap .bottom {
+    height: 1.6em;
+}
+
+.infoWrap .bottom .tagWrap {
+    width: 100%;
+    height: inherit;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.level .tags {
+    display: flex;
+    align-items: center;
+}
+
+.level .tags .sekai-button {
+    padding: 3px 5px;
+    max-height: 1.3em;
+    min-width: fit-content;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: inherit;
+    background-color: transparent;
+    color: white;
+    box-shadow: inset 0 0 0 2px limegreen;
+    margin-right: 0.3em;
+}
+
+.sekai-button.lrc {
+    box-shadow: inset 0 0 0 2px #56b2fd !important;
+}
+
+.cover .infoWrap .artistWrap,
+.cover .infoWrap .album {
+    background-color: #808080eb;
+    width: 100%;
+    overflow: hidden;
+}
+
+.cover .infoWrap .album {
+    text-align: center;
+}
+
+@media screen and (min-width: 1024px) {
+    .listCont {
+        max-width: unset;
+    }
+
+    li.level {
+        height: 8em;
+        min-height: 8em;
+    }
+
+    li.level .lvImg {
+        width: 8em;
+        height: inherit;
+        min-width: 8em;
+        min-height: inherit;
+    }
+}

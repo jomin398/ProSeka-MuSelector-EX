@@ -1,0 +1,235 @@
+:root {
+    --miku-baseColor-bk: #00cdba;
+    --miku-baseColor-tx: #444465;
+    --miku-hightLight-mint: #00ffdd;
+    --miku-hightLight-magenta: #ff55aa;
+    --miku-header-txshadow: 1.5px 1.5px var(--miku-hightLight-mint);
+    font-weight: 600;
+}
+
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL'0,
+        'wght'400,
+        'GRAD'0,
+        'opsz'48
+}
+
+.rendererContainer {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 0.5fr 1.2fr 0.8fr;
+    grid-template-rows: 1fr 1fr 0.2fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "tabs listCont cover"
+        "tabs listCont cover"
+        "tabs search search";
+}
+
+.tabWrapper {
+    grid-area: tabs;
+    background-color: #d3d3d334;
+    margin-left: 1.5em;
+    height: inherit;
+}
+
+.tabs {
+    height: inherit;
+    box-shadow: 0px 0px 0px 0px transparent inset, inset 0.3em 0px 0 0px white, inset -0.3em 0px 0 0px white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0 0.3em;
+    width: calc(100% - 0.7em);
+}
+
+.tabs .tab {
+    display: flex;
+    flex-direction: column;
+    background-color: #d3d3d375;
+    min-height: 4em;
+    width: 100%;
+    position: relative;
+    justify-content: center;
+}
+
+.tagsContainer {
+    width: inherit;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 4em;
+    overflow: auto;
+    gap: 5px;
+    justify-content: center;
+}
+
+.tagsContainer * {
+    width: inherit;
+    /* width: 10em; */
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.selected {
+    border: 1px solid red;
+}
+
+.bottomTab {
+    grid-area: search;
+    background-color: #ffffff7e;
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.bottomTab .search {
+    position: relative;
+}
+
+.bottomTab .search input[type="search"] {
+    border: 2px solid black;
+    height: 2.5em;
+    width: 21em;
+    border-radius: 10px;
+    margin-left: 2em;
+}
+
+.bottomTab .icon {
+    position: absolute;
+    top: 0.2em;
+    right: 0.2em;
+    color: black;
+}
+
+.bottomTab .search:has(input[type="search"]:focus-visible) .icon {
+    display: none;
+}
+
+.cover {
+    position: relative;
+}
+
+.cover .infoContainer {
+    position: absolute;
+    z-index: 2;
+    width: 16em;
+    height: 16em;
+}
+
+.infoContainer .infoWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: inherit;
+    gap: 5px;
+}
+
+.sekai-button {
+    position: relative;
+    padding: 0.3em 1.6em;
+    background-color: var(--miku-hightLight-mint);
+    border: 2px solid var(--miku-baseColor-tx);
+    font-size: 1.3em;
+    color: var(--miku-baseColor-tx);
+    outline: none;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 2px white;
+    border-radius: 5px;
+    font-family: 'Black Han Sans', sans-serif;
+
+}
+
+.random .sekai-button {
+    background-color: white;
+    color: var(--miku-baseColor-tx);
+    border: 2px solid var(--miku-baseColor-tx);
+    box-shadow: inset 0 0 0 2px #a5a5a5;
+}
+
+.sekai-button:active,
+.sekai-button:hover {
+    background-color: var(--miku-hightLight-magenta);
+}
+
+.bottomTab .buttons {
+    display: flex;
+    flex-direction: row;
+    /* width: 100%; */
+    justify-content: space-between;
+}
+
+.random {
+    margin-right: 1em;
+}
+
+@media screen and (max-width:480px) {
+    .rendererContainer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+
+    .tabWrapper {
+        padding: 0;
+        margin: 0;
+    }
+
+    .bottomTab .buttons {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .random {
+        margin: 0;
+    }
+
+    .bottomTab .search {
+        width: 100%;
+
+    }
+
+    .bottomTab .search input[type="search"] {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+
+    .rendererContainer {
+        grid-template-columns: 0.5fr 1fr 1fr;
+    }
+
+    .bottomTab .confirm {
+        margin-right: 1em;
+    }
+
+    .tagsContainer {
+        height: 5em;
+    }
+
+    .listCont {
+        max-height: 340px;
+        max-width: 520px;
+        margin: 40% 0;
+    }
+
+    .cover .infoContainer {
+        width: 20em;
+        height: 20em;
+    }
+
+    .cover img {
+        width: 20em;
+        height: 20em;
+    }
+}

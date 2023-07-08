@@ -1,0 +1,49 @@
+.eqmodule.reverb {
+    background-color: black;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    text-transform: capitalize;
+    flex-shrink: 0;
+    color: lightgray;
+}
+
+.eqmodule.reverb header {
+    display: flex;
+    align-items: center;
+    padding-left: 0.3em;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.eqmodule.reverb .controls,
+.eqmodule.reverb #preset,
+.eqmodule.reverb span {
+    width: 100%;
+}
+
+.eqmodule.reverb details {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.eqmodule.reverb .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    text-transform: capitalize;
+}
+
+.eqmodule.reverb input[type=checkbox] {
+    appearance: none;
+    width: 2em;
+    height: 2em;
+    border: 1px solid lightgray;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #242a2e 0, #242a2e 55%, #fff 100%)
+}
+
+.eqmodule.reverb input[type=checkbox]:checked {
+    background: radial-gradient(circle at center, lime 0, lime 55%, #fff 100%)
+}

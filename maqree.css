@@ -1,0 +1,54 @@
+.maqree {
+  width: inherit;
+  position: relative;
+  overflow: hidden;
+  height: 1.4em;
+}
+
+.maqree *,
+.maqree_cont {
+  position: absolute;
+  width: inherit;
+  margin: 0;
+  max-height: 1em;
+  white-space: nowrap;
+  transform: translateX(100%);
+  animation: marquee 10s linear infinite;
+}
+
+.maqree_cont :hover,
+.maqree *:hover {
+  -moz-animation-play-state: paused;
+  -webkit-animation-play-state: paused;
+  animation-play-state: paused;
+}
+
+.maqree_cont :active,
+.maqree *:active {
+  -moz-animation-play-state: paused;
+  -webkit-animation-play-state: paused;
+  animation-play-state: paused;
+}
+
+.maqree *:after,
+.maqree_cont :after {
+  content: "";
+  white-space: nowrap;
+  padding-right: 50px;
+}
+
+.maqree_cont :after {
+  padding-right: unset;
+  margin-right: 0.3em;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(100%);
+  }
+
+  99%,
+  to {
+    transform: translateX(-100%);
+  }
+}
