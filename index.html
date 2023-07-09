@@ -24,29 +24,14 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    .searchHighlight.mismatch {
-      display: none;
-    }
-
-    .searchHighlight.match {
-      display: flex;
-    }
-
-    .fftRender {
-      position: absolute;
-      inset: 8em 0 0 0;
-      z-index: 10;
-      border: 2px solid white;
-    }
-
     .hide {
       display: none !important;
     }
   </style>
   <link rel="stylesheet" href="./src/pjsk/pjsk.css">
-  <link rel="stylesheet" href="./lstCont.css">
-  <link rel="stylesheet" href="./maqree.css">
-
+  <link rel="stylesheet" href="./src/pjsk/lstCont.css">
+  <link rel="stylesheet" href="./src/pjsk/maqree.css">
+  <link rel="stylesheet" href="./dropDown.css">
   <script type="importmap">
     {
       "imports": {
@@ -63,8 +48,6 @@
     await new Promise(r => window.onload = () => r(true));
     const pjsk = await new PJSK();
     await pjsk.init()
-    // addScrollEvent(console.log);
-    // console.log(i18next.t("gui:option.searchhint"))
   </script>
 </head>
 
@@ -74,12 +57,14 @@
     <div class="tabWrapper">
       <div class="tabs">
         <div class="tab sort">
-          <label for="sortOpt">Sort Option</label>
-          <select name="sortOpt" id="sortOpt">
-            <option value="title">title</option>
-            <option value="genre">genre</option>
-            <option value="artist">artist</option>
-          </select>
+          <div class="dropdown dropdown-dark">
+            <label for="sortOpt">Sort Option</label>
+            <select name="preset" class="dropdown-select" name="sortOpt" id="sortOpt">
+              <option value="title">title</option>
+              <option value="genre">genre</option>
+              <option value="artist">artist</option>
+            </select>
+          </div>
         </div>
         <div class="tab">
           <div class="tagsContainer"></div>
@@ -89,7 +74,6 @@
     <div class="listCont" id="list-container">
       <ul id="list">
       </ul>
-      <canvas class="fftRender hide" width="128" height="128" id="fft-canvas"></canvas>
     </div>
     <div class="cover">
       <img alt="song Cover">

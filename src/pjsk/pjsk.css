@@ -171,6 +171,14 @@
     margin-right: 1em;
 }
 
+.searchHighlight.mismatch {
+    display: none;
+}
+
+.searchHighlight.match {
+    display: flex;
+}
+
 @media screen and (max-width:480px) {
     .rendererContainer {
         display: flex;
