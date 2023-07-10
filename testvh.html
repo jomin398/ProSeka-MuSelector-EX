@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+        }
+
+        body {
+            position: relative;
+            width: 100%;
+            min-height: -webkit-fill-available;
+            height: 100%;
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        .waveform {
+            min-height: 110px;
+        }
+
+        .waveform:focus {
+            outline: #fff auto 1px;
+        }
+
+        .waveform.focus {
+            outline: #fff auto 1px;
+        }
+
+        article.container {
+            width: inherit;
+            height: inherit;
+            display: grid;
+            grid-template-columns: min-content 1fr;
+            grid-template-rows: 1fr;
+            grid-auto-columns: 1fr;
+            grid-auto-rows: 1fr;
+            gap: 0px 0.6em;
+            grid-auto-flow: row;
+            grid-template-areas:
+                "left right";
+        }
+
+        .left {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: min-content 1fr;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                "trackNo"
+                "image";
+            grid-area: left;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .trackNo {
+            grid-area: trackNo;
+            text-align: center;
+        }
+
+        .image {
+            grid-area: image;
+        }
+
+        .image img {
+            min-width: 210px;
+            min-height: 210px;
+            background-color: #ffffff73;
+            object-fit: contain;
+        }
+
+        .image img[src] {
+            background-color: transparent;
+        }
+
+        .right {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: min-content min-content min-content min-content 1fr;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                "title"
+                "artist"
+                "album"
+                "illust"
+                "lyrics";
+            grid-area: right;
+            font-size: 1em;
+        }
+
+        .title {
+            grid-area: title;
+        }
+
+        .artist {
+            grid-area: artist;
+        }
+
+        .album {
+            grid-area: album;
+        }
+
+        .illust {
+            grid-area: illust;
+        }
+
+        .lyrics {
+            grid-area: lyrics;
+            min-height: 10em;
+            height: 10em;
+            min-width: 15em;
+        }
+
+        .optionTab {
+            position: absolute;
+            z-index: 9999;
+            top: unset;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body class="themed">
+    <main>
+        <div class="waveform focus" id="wave"></div>
+        <article class="container">
+            <div class="left">
+                <div class="trackNo">
+                    <label for="track">track</label>
+                    <span id="track">0</span>
+                </div>
+                <div class="image">
+                    <img>
+                </div>
+            </div>
+            <div class="right">
+                <div class="title">悠久のカタルシス ～4スターズ Ver.～</div>
+                <div class="artist">アズールレーン</div>
+                <div class="album"></div>
+                <div class="illust">
+                    <label for="illust">illustrated by</label>
+                    <span id="illust">アズールレーン</span>
+                </div>
+                <div class="lyrics"></div>
+            </div>
+        </article>
+    </main>
+    <div class="optionTab">
+        <img src="./setting.svg" alt="" width="50" height="50">
+    </div>
+    <section class="settings">
+        <div class="modal hide" role="dialog">
+            <div class="modal-dialog">
+                <div class="demoModule"></div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
