@@ -5,6 +5,7 @@ import LanguageDetector from 'i18n-langdetect';
 import { default as I18nFetchApi } from 'i18n-fetch';
 import { ImgSearch } from '../lib/ImgSearch/index.js';
 import { SongSearch } from '../lib/SongSearch/beta.js';
+import { getDomPath } from '../lib/getDomPath.js';
 function buildRegx(folderName) {
     return [new RegExp(`(?<=${folderName}\/).*`, "gm"), new RegExp(`${folderName}\/`, "gm")]
 };
@@ -156,6 +157,7 @@ export default class PJSK {
         }
         levels.map(song => {
             song = ((o, temp) => {
+                const root = 'https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/';
                 const level = temp.cloneNode(true);
 
                 let { n, f, lrc, atrys, tags, artist, maker, m, album, another, image } = o;
@@ -178,12 +180,12 @@ export default class PJSK {
                 };
                 if (artist) {
                     if (!Array.isArray(artist)) artist = [artist];
-                    artist.map(e => {
+                    artist.map((e, i) => {
                         let tagElm = document.createElement('span');
                         tagElm.innerText = e;
                         elems.artist.append(tagElm);
 
-                        elems.audioUrl.value += `&ar=${e}`;
+                        elems.audioUrl.value += `&ar${i}=${e}`;
                     })
                 }
                 if (tags) {
@@ -212,15 +214,28 @@ export default class PJSK {
                         this.searchElm.value = tagElm.innerText;
                         this.#searchEngine.handleSearch();
                     };
+                    if (m) m.filter(e => e.endsWith('.lrc')).map((e, i) => {
+                        elems.audioUrl.value += `&lrc${i}=${root}${e}`;
+                    });
+
                     elems.tags.append(tagElm);
                 }
                 if (m && m.filter(e => e.endsWith('.mp3'))) {
                     let aurls = m.filter(e => e.endsWith('.mp3'))
-                    aurls = aurls.map((e, i) => `&au${i}=https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/${e}`);
+                    aurls = aurls.map((e, i) => `&au${i}=${root}${e}`);
                     elems.audioUrl.value += aurls.join("");
                 }
                 return level;
             })(song, this.#genItemElem())
+            song.onclick = (ev) => {
+                let level = getDomPath(ev.target);
+                level = document.querySelector(level.slice(0, level.findIndex(e => e.includes('li:')) + 1).join('>'));
+                Array.from(ls.children).map(e => {
+                    e.classList.remove("selected");
+                })
+                level.classList.add("selected");
+                this.onselected(null, null, level);
+            };
             ls.appendChild(song)
         });
 
@@ -240,11 +255,12 @@ export default class PJSK {
             atrys = atrys.concat(n, f, origName);
             let name = 'unknown';
             let image = new ImgSearch(images).retrySearch(atrys).filter(e => e);
-            if (origName == "Dear") image = ["Dear.jpg"];
+            // if (origName == "Dear") image = ["Dear.jpg"];
             if (image) {
                 if (Array.isArray(image)) {
                     let r = image.map(e => e.replace(/\.\w{3}$/gm, ''));
                     let s = r.find(e => e == origName);
+                    // console.log(s,origName,r)
                     image = s ? `${s}.jpg` : r[0] ? `${r[0]}.jpg` : r[1] ? `${r[1]}.jpg` : null ?? null;
                     if (image) image = `${this.#repoRoot}images/${image}`;
                 } else {
@@ -378,29 +394,36 @@ export default class PJSK {
         list.parentElement.scrollTo(0, rng);
     }
     openPlayer() {
-        console.log(document.querySelector('.cover input[type=text]').value);
+        const query = document.querySelector('.cover input[type=text]').value;
+
+        const linker = document.createElement('a');
+        linker.href = `./player.html?${query}&referrer=index.html`;
+        linker.target = '_top';
+        linker.click();
         // var queryString = "?a0=abcd.mp3";
         // var url = "newpage.html" + queryString;
         // window.open(url, "_blank");
     }
+    onselected(idx, top, elm) {
+        const coverWrap = document.querySelector('.cover');
+        const album = elm.querySelector('.album span');
+        let artist = elm.querySelector('.artist');
+        const img = elm.querySelector('img');
+        coverWrap.querySelector('img').src = img ? img.src : '';
+        if (elm.innerHTML != '') {
+            const selectedUrl = elm.querySelector('input[name=audioUrl]').value;
+            coverWrap.querySelector('.album span').innerText = album.innerText;
+            coverWrap.querySelector('.artist').innerHTML = '';
+            artist = artist.cloneNode(true);
+            coverWrap.querySelector('.artist').replaceWith(artist);
+            coverWrap.querySelector('input[name=audioUrl]').value = selectedUrl;
+        }
+    }
     async init() {
         await this.#preScrollEv();
         this.#searchEngine = new SongSearch(document.querySelector('.listCont #list'), this.searchElm, this.#resetScroll.bind(this));
-        this.#onScroll = (idx, top, elm) => {
-            const coverWrap = document.querySelector('.cover');
-            const album = elm.querySelector('.album span');
-            let artist = elm.querySelector('.artist');
-            const img = elm.querySelector('img');
-            coverWrap.querySelector('img').src = img ? img.src : '';
-            if (elm.innerHTML != '') {
-                const selectedUrl = elm.querySelector('input[name=audioUrl]').value;
-                coverWrap.querySelector('.album span').innerText = album.innerText;
-                coverWrap.querySelector('.artist').innerHTML = '';
-                artist = artist.cloneNode(true);
-                coverWrap.querySelector('.artist').replaceWith(artist);
-                coverWrap.querySelector('input[name=audioUrl]').value = selectedUrl;
-            }
-        };
+
+        this.#onScroll = this.onselected;
         this.#resetScroll();
 
         document.querySelector('.bottomTab .random button').onclick = this.#rngScroll;

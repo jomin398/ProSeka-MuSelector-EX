@@ -46,6 +46,7 @@ export class LyricDisp extends Lyric {
       if (this.#processData.option?.anime && typeof this.#processData.option?.anime == 'string') this.animes[this.#processData.option.anime](line, text);
       //(line, text);
     };
+    if (option.debug) this.#processData.debug = option.debug;
     return this;
   }
   #processData = {
@@ -54,7 +55,8 @@ export class LyricDisp extends Lyric {
     d2: [],
     prevText: '',
     lrcLines: null,
-    option: null
+    option: null,
+    debug: false
   };
   #onRefresh(line, text) {
     const exLyrics = this.#processData.lrcLines[line].extendedLyrics;
@@ -165,7 +167,7 @@ export class LyricDisp extends Lyric {
       if (this.#processData.option?.ForceMultiLine) {
         isMultiLine = true;
       }
-      if (this.#processData.option.debug) {
+      if (this.#processData.debug) {
         console.log("check is MultiLine? :", isMultiLine);
         console.log("debugging the check :", {
           length: l,
@@ -179,7 +181,6 @@ export class LyricDisp extends Lyric {
       }
 
       if (isMultiLine) trns = this.#processData.d2.join('\n');
-
       this.setLyric(this.#processData.data, trns);
       if (this.#processData.option.ignorePron) {
         console.warn('Ignored pronunciation notation')
@@ -197,9 +198,10 @@ export class LyricDisp extends Lyric {
     this.wavesurfer.on("pause", function () {
       this.pause();
     }.bind(this));
-    this.wavesurfer.on('seeking', () => {
+    this.wavesurfer.on('seeking', function () {
       this.pause();
+      if (isNaN(this._performanceTime)) this.render();
       this.play(this.wavesurfer.getCurrentTime() * 1000);
-    });
+    }.bind(this));
   }
 }

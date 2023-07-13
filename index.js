@@ -163,18 +163,25 @@ class Player {
     return extractInfo(this.option.musicName);
   }
   #dispMetaData(tagData) {
-    const imgElm = document.querySelector('.info img');
-    const imageCradit = document.querySelector('.info_item:nth-child(6)');
-    const dispElems = [...document.querySelectorAll('.info_item')].slice(0, -1);
-    let { title, artist, album, comp, maker, trackNum } = tagData ?? {};
+    const imgElm = document.querySelector('.image img');
+    const imageCradit = document.querySelector('.illust');
+    const dispElems = [
+      document.querySelector('.trackNo'),
+      document.querySelector('.title'),
+      document.querySelector('.artist'),
+      document.querySelector('.album'),
+      document.querySelector('.illust'),
+      document.querySelector('.lyricsContiner')
+    ].slice(0, -1);
+    let { title, artist, album, comp, maker, trackNum, imageUrl } = tagData ?? {};
     if (!tagData) title = '', artist = '', album = '', comp = '', maker = '', trackNum = 0;
     imgElm.classList.remove('hide');
     imageCradit.classList.remove('hide');
 
 
     if (imgElm) imgElm.removeAttribute('src');
-    if (imgElm && tagData && tagData.imageUrl) imgElm.src = tagData.imageUrl;
-    if (!tagData.imageUrl) {
+    if (imgElm && imageUrl) imgElm.src = imageUrl;
+    if (!imageUrl) {
       imgElm.classList.add('hide');
       imageCradit.classList.add('hide');
     }
@@ -182,7 +189,7 @@ class Player {
     if (this.lyricDisp.tags && !this.lyricDisp.tags?.title) this.lyricDisp.tags = this.#titleParser();
 
     if (this.lyricDisp.tags && this.lyricDisp.tags.title) {
-      title = this.lyricDisp.tags.title;
+      title = this.lyricDisp.tags.title ?? this.userOption.musicName;
     }
 
     if (this.lyricDisp.tags && this.lyricDisp.tags.artist) {
@@ -273,12 +280,12 @@ class Player {
     this.wavesurfer = new WaveSurfer(this.option.wavesurfer);
     try { lyricData = await (await fetch(lyricParh)).text(); } catch (error) { };
 
-    this.lyricDisp = new LyricDisp(lyricData, this.wavesurfer, { ignorePron: 0, anime: this.themeData?.anime });
+    this.lyricDisp = new LyricDisp(lyricData, this.wavesurfer, { ignorePron: 0, anime: this.themeData?.anime, debug: true });
     this.lyricDisp.render();
 
     new MetaDataExtract(this.option.wavesurfer.url).parse()
       .then(d => this.#dispMetaData(d)).catch(e => {
-        console.warn(e)
+        // console.warn(e)
         this.#dispMetaData()
       })
 
@@ -321,11 +328,8 @@ class Player {
 
     console.log(reverb)
     //source.connect(context.destination);
-
-
-
   }
-  async init() {
+  async initAudio() {
     if (this.userOption.wavesurfer) {
       Object.assign(this.option.wavesurfer, this.userOption.wavesurfer)
       delete this.userOption.wavesurfer;
@@ -346,17 +350,15 @@ class Player {
     const { musicName, musicRootPath, lrcRootPath, lrcFileName } = this.option;
 
     await this.replaceSong({ musicName, musicRootPath, lrcRootPath, lrcFileName }, this.option.theme);
-
-
-
-
-
     this.wavesurfer.renderer.parent.classList.toggle('focus');
     this.wavesurfer.once('interaction', () => {
       this.wavesurfer.renderer.parent.classList.toggle('focus');
       try {
         this.EQZ();
         this.wavesurfer.play();
+        // this.lyricDisp.play(this.wavesurfer.getCurrentTime() * 1000)
+        this.lyricDisp.play(0);
+        //this.lyricDisp.play(this.wavesurfer.getCurrentTime() * 1000)
       } catch (error) { }
     });
     this.wavesurfer.on('finish', () => {
@@ -379,6 +381,10 @@ class Player {
       // this.wavesurfer.renderer.cursor.style.height = `${value}px`;
     });
     window.dispatchEvent(new Event('resize'));
+  }
+  async init() {
+    if (!this.userOption) throw new ReferenceError('userOption is not Object.');
+    this.initAudio.bind(this)();
     window.Player = this;
     return this;
   }
@@ -400,7 +406,173 @@ Player.replaceSong({
     lrcFileName:'[初音ミク] ポジティブ・パレード'
 })
 */
-await new Player({
+class Main {
+  constructor() {
+  }
+  #defaultQueryStr = `&au0=https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/Secret base 〜君がくれたもの〜/Secret base.mp3&au1=https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/Secret base 〜君がくれたもの〜/Secret base - 설레임%26쁘띠허브.mp3&au2=https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/Secret base 〜君がくれたもの〜/Secret base - Team 아리아.mp3`;
+  async popup(res) {
+    const container = document.querySelector('.eqmodules');
+    const assetRoot = 'https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios';
+
+    function extractArtist(path) {
+      const regex = /-(.*?)\.mp3/;
+      const match = path.match(regex);
+      const artist = match ? match[1].trim() : null;
+      return artist;
+    }
+    function parsePath(path) {
+      const regex = /\/([^\/]+)\/([^\/]+\.\w{3})$/;
+      const matches = regex.exec(path);
+
+      if (!matches) {
+        return null;
+      }
+
+      const lastFolderName = matches[1];
+      const fileName = matches[2];
+
+      return {
+        lastFolderName,
+        fileName
+      };
+    }
+    function Template2Dom(htmlStr) {
+      return new DOMParser().parseFromString(`
+    ${htmlStr ??= ''}`, 'text/html').body.firstElementChild;
+    }
+    function parseOpt(res) {
+      let { ar, an, lrc, au } = res;
+      ar ??= ['noInfo'];
+      an ??= au.map(e => extractArtist(e)).filter(e => e);
+
+      console.log(ar, an, lrc, au);
+      let artist = [ar.join(',')].concat(an)
+      const resetElm = elm => {
+        elm.innerHTML = '';
+        elm.removeAttribute('style');
+      }
+
+      const elms = au.map((e, i) => {
+        const dispLang = false;
+        // let supportLang = 'ja';
+        // let langRegex = /(\b\w{2}) ver/i;
+        // supportLang = e.match(langRegex) ? e.match(langRegex)[1].toLowerCase() : 'ja';
+        // langRegex = /(?<=\-\s?)[\w|가-힣\s]*/i;
+        // supportLang = e.match(langRegex) ? 'ko' : 'ja';
+        /*
+         <label for="lang">Language :</label>
+        <span id="lang">${supportLang}</span>` : `
+        <label for="lang">Language :</label>
+        <span id="lang">${supportLang}</span>
+        */
+        let el = Template2Dom(`<button class="sekai-button decide ${i == 0 ? 'orign' : 'another'}">
+        <label for="artists">Sang by :</label>
+        <span id="artists">${artist[i]}</span>
+        ${i == 0 ? `<p>Original song</p>` : ``}
+        </button>`);
+        // console.log(e, supportLang)
+        const promise = new Promise((resolve, reject) => {
+          el.onclick = () => {
+            let root = '';
+            let musicName = '';
+            const audiopath = parsePath(e);
+            const lrcPath = lrc ? parsePath(lrc[0]) : null;
+            if (!audiopath) return;
+
+            const { lastFolderName, fileName } = audiopath;
+            root = `${assetRoot}/${lastFolderName}/`;
+            musicName = fileName.replace(/\.\w{3}$/g, '');
+            let obj = {
+              musicName,
+              musicRootPath: root,
+              theme: 'wave',
+              wavesurfer: {
+                container: '#waveform',
+                waveColor: '#4F4A85',
+                progressColor: '#383312',
+              }
+            };
+            if (lrcPath) {
+              const { lastFolderName, fileName } = lrcPath;
+              Object.assign(obj, {
+                lrcRootPath: `${assetRoot}/${lastFolderName}/`,
+                lrcFileName: fileName.replace(/\.\w{3}$/g, '')
+              })
+            }
+
+            resetElm(container)
+            container.classList.add('hide');
+            resolve(obj)
+          }
+        })
+        return { el, promise };
+      })
+      elms.map(e => container.append(e.el));
+      container.classList.remove('hide');
+      return Promise.race(elms.map(e => e.promise));
+    };
+    return await parseOpt(res);
+  }
+  async router() {
+    const search = location.search;
+    function removeQueryParams() {
+      var urlWithoutQuery = window.location.href.split('?')[0];
+      history.pushState({}, document.title, urlWithoutQuery);
+    }
+    function getQueryString(object) {
+      const parameters = Object.fromEntries(new URLSearchParams(object));
+      console.log(parameters)
+      const mergedData = Object.entries(parameters).reduce((acc, [key, value]) => {
+        const prefix = key.match(/^[a-zA-Z]+/)[0];
+        (acc[prefix] = acc[prefix] || []).push(value);
+        return acc;
+      }, {});
+      return mergedData;
+    }
+    function Template2Dom(htmlStr) {
+      return new DOMParser().parseFromString(`
+    ${htmlStr ??= ''}`, 'text/html').body.firstElementChild;
+    }
+
+    const Obj = getQueryString(search);
+    removeQueryParams();
+
+    const container = document.querySelector('.eqmodules');
+    Object.assign(container.style, {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      inset: '5%',
+      backgroundColor: '#808080fa',
+      borderRadius: '15px'
+    })
+    if (!Obj || Object.keys(Obj).length === 0) {
+      console.warn('Please select');
+      const qs = this.#defaultQueryStr.slice(1);
+      const defaultOptionElms = [
+        Template2Dom(`<h3>Please select</h3>`),
+        Template2Dom(`<a href="./index.html?referrer=./player.html" target="_top" ><button class="sekai-button decide">Go Back to Playlist</button></a>`),
+        Template2Dom(`<a href="./player.html?${qs}" target="_self" ><button class="sekai-button decide">Play Default Song (Omakase)</button></a>`)
+      ];
+
+      container.append(...defaultOptionElms);
+      container.classList.remove('hide');
+      return await Promise.race(defaultOptionElms.slice(1).map(e => {
+        return new Promise((resolve, reject) => {
+          e.onclick = () => {
+            resolve(true);
+          };
+        });
+      }))
+    } else return await this.popup(Obj);
+  }
+}
+const o = await new Main().router();
+console.log(o)
+await new Player(o).init();
+/*
+{
   musicName: '悠久のカタルシス (4スターズ Ver)',
   musicRootPath: 'https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/悠久のカタルシス/',
   lrcRootPath: 'https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/悠久のカタルシス/',
@@ -411,7 +583,5 @@ await new Player({
     progressColor: '#383312',
   },
   mix: true,
-}).init();
-
-// const json = window.json = await (await fetch('https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/info.json')).json();
-// console.log(json)
+}
+*/

@@ -3,118 +3,42 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="./css/bootStrap.css">
+  <link rel="stylesheet" href="./css/player.css">
   <style>
-    :root {
-      --wavedisp-dark: #132029;
-      --waveprogress-dark: #5180b0;
-      --wavecursor-dark: #74c5fb;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .hide {
-      display: none !important;
-    }
-
-    .show {
-      display: block !important;
-    }
-
-    .container {
-      position: relative;
-      min-height: 10em;
-      height: 10em;
-      width: 100%;
-      overflow: hidden;
-      max-width: initial !important;
-      margin: 0 !important;
-    }
-
-    .lyrics {
-      position: absolute;
-      top: 0;
-      left: 0;
+    article.container {
       width: inherit;
       height: inherit;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: min-content 1fr;
+      gap: 0px 0px;
+      grid-template-areas:
+        "left"
+        "right";
     }
 
-    .lyrics span {
-      animation: slideInLeft 0.8s;
-      text-align: center;
+    .statJS canvas {
+      width: 7em !important;
+      height: auto !important;
     }
 
-    .lyrics.right span {
-      animation: slideInRight 0.8s;
-    }
-
-    .wave {
-      display: none;
+    /* Eqmodules */
+    .eqmodules {
+      inset: 0;
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: inherit;
-      height: inherit;
-      overflow: hidden;
-      z-index: 1;
-      animation: waveLRAnimation 1.4s linear;
+      z-index: 2;
     }
 
-    .wave.right {
-      animation: waveRLAnimation 1.4s linear;
-    }
-
-    .wave:before,
-    .wave:after {
-      content: "";
+    /* misc */
+    .optionTab {
       position: absolute;
+      z-index: 9999;
+      top: unset;
       bottom: 0;
-      width: 200%;
-      height: inherit;
-      background: linear-gradient(to right, #ffffff73 10%, #00b0f0 90%);
-    }
-
-    .wave.right:before,
-    .wave.right:after {
-      background: linear-gradient(270deg, #ffffff73 0%, #00b0f0 100%);
-    }
-
-
-    .wave:before {
-      left: -200%;
-    }
-
-    .wave:after {
-      left: 0;
-    }
-
-    .wave.right:before {
-      right: -200%;
-    }
-
-    .wave.right:after {
       right: 0;
     }
 
@@ -123,238 +47,78 @@
       height: auto !important;
     }
 
-    #waveform.focus {
-      outline: #fff auto 1px;
-    }
-
-    .wrapper {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 1em 0;
-      text-transform: capitalize;
-      flex-wrap: wrap;
-      width: 100%;
-      height: inherit;
-    }
-
-    .info img {
-      min-width: 13em;
-      min-height: 13em;
-      width: 30%;
-      background-color: #ffffff73;
-      object-fit: contain;
-    }
-
-    .info img[src] {
-      background-color: transparent;
-    }
-
-    .info .info_item {
-      flex: 0 0 auto;
-      max-width: 320px;
-      box-sizing: border-box;
-      margin: 5px 0;
-    }
-
-    .info span {
-      display: block;
-      min-height: 1em;
-    }
-
-    .info_item.head {
-      font-size: 1.4em;
-      font-weight: bold;
-      margin: 0;
-    }
-
-    span#track,
-    span#illust,
-    span#album,
-    span#artist {
-      display: inline;
-      text-overflow: ellipsis;
-    }
-
-    .optionTab {
-      position: absolute;
-      top: 0;
-      right: 0;
-    }
-
-    .demoModule {
-      background-color: gray;
-      border: 1px solid white;
-      border-radius: 5px;
-      width: 400px;
-      height: 220px;
-    }
-
-    .settings {
-      position: absolute;
-      inset: auto 0;
-    }
-
-    .modal {
-      text-align: center;
-    }
-
-    .modal-dialog {
-      display: inline-block;
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    @keyframes waveLRAnimation {
-      0% {
-        transform: translateX(0);
-      }
-
-      100% {
-        transform: translateX(200%);
-      }
-    }
-
-    @keyframes waveRLAnimation {
-      0% {
-        transform: translateX(0);
-      }
-
-      100% {
-        transform: translateX(-200%);
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .themed {
-        background: #000;
-        color: #fff;
-      }
-    }
-
-    @media screen and (max-width:426px) {
-      .info img {
-        width: 320px;
-      }
-
-      .container {
-        min-height: 10em;
-        height: 10em;
-      }
-
-      .container .lyrics {
-        font-size: 1.15rem;
-      }
-
-      .wave {
-        animation: waveLRAnimation 1.8s linear;
-      }
-
-      .wave.right {
-        animation: waveRLAnimation 1.8s linear;
-      }
-    }
-
     @media screen and (max-height:426px) {
-      body {
-        justify-content: space-between;
-        flex-direction: column;
+      article.container {
+        grid-template-columns: min-content 1fr;
+        grid-template-rows: 1fr;
+        grid-auto-columns: 1fr;
+        grid-auto-rows: 1fr;
+        gap: 0px 0.6em;
+        grid-auto-flow: row;
+        grid-template-areas:
+          "left right";
+        margin-top: 0.5em;
       }
+    }
 
-      .info_item {
-        margin: 0;
-      }
-
-      .info img {
-        max-width: 270px;
-        max-height: unset;
-        width: auto;
-      }
-
-      .wrapper {
-        height: calc(100% - 3.5em);
-        font-size: 16px;
-      }
-
-      .info {
-        margin: 0;
-        justify-content: space-evenly;
-      }
-
-      .container {
-        position: relative;
-        min-height: 10em;
-        height: 10em;
-        max-width: calc(100% - 320px) !important;
-        width: inherit;
-        overflow: hidden;
-      }
-
-      .optionTab {
-        top: unset;
-        bottom: 0;
-        right: 0;
-      }
+    .settings a:has(.sekai-button.decide) {
+      text-decoration: none;
     }
   </style>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/@logue/reverb@latest/dist/Reverb.umd.min.js"></script> -->
   <script type="importmap">
-    {
-      "imports": {
-        "lrc-file-parser": "https://cdn.jsdelivr.net/npm/lrc-file-parser@latest/+esm",
-        "wavesurfer.js": "https://cdn.jsdelivr.net/npm/wavesurfer.js@beta/+esm",
-        "wavesurfer/plugins/": "https://cdn.jsdelivr.net/npm/wavesurfer.js@beta/dist/plugins/",
-        "lib/": "./src/lib/",
-        "reverb": "https://cdn.jsdelivr.net/npm/@logue/reverb@1.2.14/+esm"
-      }
-    }
-  </script>
+        {
+          "imports": {
+            "lrc-file-parser": "https://cdn.jsdelivr.net/npm/lrc-file-parser@latest/+esm",
+            "wavesurfer.js": "https://cdn.jsdelivr.net/npm/wavesurfer.js@beta/+esm",
+            "wavesurfer/plugins/": "https://cdn.jsdelivr.net/npm/wavesurfer.js@beta/dist/plugins/",
+            "lib/": "./src/lib/",
+            "reverb": "https://cdn.jsdelivr.net/npm/@logue/reverb@1.2.14/+esm"
+          }
+        }
+    </script>
   <script src="https://cdn.jsdelivr.net/npm/jsmediatags@latest/dist/jsmediatags.min.js"></script>
   <script type="module" src="./index.js"></script>
 </head>
 
 <body class="themed">
-  <div id="waveform"></div>
-  <section class="wrapper">
-    <div class="info">
-      <div class="info_item head">
-        <label for="track">track</label>
-        <span id="track">0</span>
+  <main>
+    <div class="waveform" id="waveform"></div>
+    <article class="container">
+      <div class="left">
+        <div class="trackNo">
+          <label for="track">track</label>
+          <span id="track">0</span>
+        </div>
+        <div class="image">
+          <img>
+        </div>
       </div>
-      <img>
-      <div class="info_item">
-        <span id="title"></span>
+      <div class="right">
+        <div class="title">
+          <span>unknown</span>
+        </div>
+        <div class="artist">
+          <span>unknown</span>
+        </div>
+        <div class="album">
+          <span></span>
+        </div>
+        <div class="illust">
+          <label for="illust">illustrated by</label>
+          <span id="illust">unknown</span>
+        </div>
+        <div class="lyricsContiner">
+          <div class="wave"></div>
+          <div class="lyrics"></div>
+        </div>
       </div>
-      <div class="info_item">
-        <span id="artist"></span>
-      </div>
-      <div class="info_item">
-        <span id="album"></span>
-      </div>
-      <div class="info_item">
-        <label for="illust">illustrated by</label>
-        <span id="illust">unknown</span>
-      </div>
-      <div class="info_item container">
-        <div class="wave"></div>
-        <div class="lyrics"></div>
-      </div>
-    </div>
-  </section>
+    </article>
+  </main>
   <div class="optionTab">
     <img src="./setting.svg" alt="" width="50" height="50">
   </div>
   <section class="settings">
-    <div class="modal hide" role="dialog">
-      <div class="modal-dialog">
-        <div class="demoModule"></div>
-      </div>
-    </div>
+    <div class="eqmodules hide"></div>
   </section>
 </body>
 

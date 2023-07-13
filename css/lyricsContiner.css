@@ -1,0 +1,33 @@
+.lyricsContiner {
+  grid-area: lyricsContiner;
+  min-height: 10em;
+  height: 10em;
+  position: relative;
+  overflow: hidden;
+}
+
+.lyrics {
+  position: absolute;
+  inset: 0;
+  width: inherit;
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lyrics span {
+  animation: slideInLeft 0.8s;
+  text-align: center;
+}
+
+.lyrics.right span {
+  animation: slideInRight 0.8s;
+}
+
+@media screen and (max-width:426px) {
+  .container .lyrics {
+    font-size: 1.15rem;
+  }
+}

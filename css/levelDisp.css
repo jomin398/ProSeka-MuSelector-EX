@@ -1,0 +1,105 @@
+.container .left {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "trackNo"
+        "image";
+    grid-area: left;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-transform: capitalize;
+    text-align: center;
+}
+
+.trackNo {
+    grid-area: trackNo;
+    text-align: center;
+}
+
+.image {
+    grid-area: image;
+}
+
+.image img {
+    min-width: 210px;
+    min-height: 210px;
+    background-color: #ffffff73;
+    object-fit: contain;
+}
+
+.image img[src] {
+    background-color: transparent;
+}
+
+.container .right {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content min-content min-content min-content 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "title"
+        "artist"
+        "album"
+        "illust"
+        "lyricsContiner";
+    grid-area: right;
+    font-size: 1em;
+}
+
+.title,
+.artist,
+.album,
+.illust {
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.title {
+    grid-area: title;
+}
+
+.artist {
+    grid-area: artist;
+}
+
+.album {
+    grid-area: album;
+    min-height: 1.5em;
+}
+
+.illust {
+    grid-area: illust;
+}
+
+
+@media screen and (max-width:426px) {
+    .container .left img {
+        width: 320px;
+    }
+}
+
+@media screen and (max-height:426px) {
+    .container .left {
+        text-align: unset;
+    }
+
+    .container .left img {
+        max-width: 260px;
+        max-height: 260px;
+    }
+}
+
+/* forDesktop */
+@media screen and (min-width: 1024px) {
+    .container .left img {
+        width: auto;
+        max-width: 50%;
+        min-width: unset;
+        min-height: unset;
+        object-fit: initial;
+    }
+}
