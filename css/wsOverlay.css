@@ -1,0 +1,15 @@
+.ws-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: black;
+    z-index: 9999;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.ws-overlay.hide{
+    display: none;
+}

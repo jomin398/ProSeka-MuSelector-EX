@@ -108,7 +108,10 @@ export default class PJSK {
                         loadPath: `${this.#repoRoot}locales/{{ns}}/{{lng}}.json`
                     }]
                 },
-                ns: ["musicTags", "songNames", "gui"]
+                ns: ["musicTags", "songNames", "gui"],
+                missingKeyFn: (locale, value) => {
+                    return value.replace(/\.*\:/g, '')
+                }
             });
 
             window.i18next = i18next;
@@ -149,8 +152,10 @@ export default class PJSK {
         };
         start ??= this.lastLVDataRead;
         let levels = this.levelData;
-        this.lastLVDataRead += 20;
-        if (this.lastLVDataRead > levels.length || this.lastLVDataRead - 10 < start) {
+        let bfLast = levels.length - 10;
+        if (this.lastLVDataRead < levels.length) this.lastLVDataRead += 20;
+        if (this.lastLVDataRead >= bfLast) this.lastLVDataRead = levels.length;
+        if (this.lastLVDataRead > levels.length || bfLast < start) {
             levels = levels.slice(start, 0);
         } else {
             levels = levels.slice(start, this.lastLVDataRead);
@@ -159,7 +164,7 @@ export default class PJSK {
             song = ((o, temp) => {
                 const root = 'https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/';
                 const level = temp.cloneNode(true);
-                const Encode =s => encodeURIComponent(s);//.replace(/%20/g, '+');
+                const Encode = s => encodeURIComponent(s);//.replace(/%20/g, '+');
                 let { n, f, lrc, atrys, tags, artist, maker, m, album, another, image } = o;
                 const elems = {
                     img: level.querySelector('img'),

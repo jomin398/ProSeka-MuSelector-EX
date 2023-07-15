@@ -31,6 +31,10 @@
       inset: 0;
       position: absolute;
       z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     /* misc */
@@ -72,7 +76,8 @@
             "wavesurfer.js": "https://cdn.jsdelivr.net/npm/wavesurfer.js@beta/+esm",
             "wavesurfer/plugins/": "https://cdn.jsdelivr.net/npm/wavesurfer.js@beta/dist/plugins/",
             "lib/": "./src/lib/",
-            "reverb": "https://cdn.jsdelivr.net/npm/@logue/reverb@1.2.14/+esm"
+            "FlStudioKnob": "./src/lib/flStudioKnob/index.js",
+            "@logue/reverb": "https://cdn.jsdelivr.net/npm/@logue/reverb@latest/+esm"
           }
         }
     </script>
@@ -115,7 +120,7 @@
     </article>
   </main>
   <div class="optionTab">
-    <img src="./setting.svg" alt="" width="50" height="50">
+    <img src="./setting.svg" alt="" width="50" height="50" id="setting">
   </div>
   <section class="settings">
     <div class="eqmodules hide"></div>

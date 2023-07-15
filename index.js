@@ -4,7 +4,7 @@ import { LyricDisp } from "lib/LyricDisp.js";
 import { MetaDataExtract } from "lib/MetaDataExtract.js";
 import Stats from "lib/stats.js";
 import { themeSetting } from "./themeSetting.js";
-import { default as Reverb } from "reverb";
+import ReverbEQ from "./src/lib/ReverbEQ/index.js";
 // Event listener for file input change
 await new Promise(r => window.onload = () => r(true));
 
@@ -28,7 +28,7 @@ class Player {
     this.lyricDisp = null;
     this.stats = null;
     this.userOption = option;
-
+    this.equalizer = null;
     // console.log(this.option)
   };
 
@@ -306,28 +306,11 @@ class Player {
     this.audioCtx = AudioCtx;
     let el = this.wavesurfer.media;
     let AudioSrc = AudioCtx.createMediaElementSource(el);
-    //AudioSrc.connect(AudioCtx.destination);
-    // var source = context.createMediaElementSource(el);
-    // console.log(source)
-
-
-    AudioSrc.disconnect();
-    var reverb = new Reverb(AudioCtx, {
-      noise: 'pink',
-      time: 5,
-      decay: 18,
-      delay: 2,
-      filterType: 'lowpass',
-      filterFreq: 4000,
-      filterQ: 1,
-      mix: 0.65
-    });
-    await reverb.ready;
-    reverb.connect(AudioSrc);
-    AudioSrc.connect(AudioCtx.destination);
-
-    console.log(reverb)
-    //source.connect(context.destination);
+    this.equalizer = new ReverbEQ(this.audioCtx);
+    const eqWrapper = document.querySelector('.eqmodules');
+    eqWrapper.append(this.equalizer.element);
+    this.equalizer.init(el, AudioSrc)
+    return this.equalizer;
   }
   async initAudio() {
     if (this.userOption.wavesurfer) {
@@ -351,6 +334,31 @@ class Player {
 
     await this.replaceSong({ musicName, musicRootPath, lrcRootPath, lrcFileName }, this.option.theme);
     this.wavesurfer.renderer.parent.classList.toggle('focus');
+    const wrapper = this.wavesurfer.getWrapper();
+    if (!wrapper.querySelector('.ws-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'ws-overlay';
+      overlay.innerHTML = `<img id="replay" src="./replay.svg" alt="replay" width="50" height="50"/>`;
+      Object.assign(overlay.style, {
+        position: 'absolute',
+        inset: 0,
+        backgroundColor: 'black',
+        zIndex: 9,
+        opacity: 0.8,
+        display: 'none',
+      })
+
+      Object.assign(overlay.querySelector('img').style, {
+        position: 'absolute',
+        inset: 0,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row'
+      })
+      wrapper.appendChild(overlay);
+    }
     this.wavesurfer.once('interaction', () => {
       this.wavesurfer.renderer.parent.classList.toggle('focus');
       try {
@@ -362,11 +370,20 @@ class Player {
       } catch (error) { }
     });
     this.wavesurfer.on('finish', () => {
-      if (this.option.loop) {
+      const replay = () => {
+        const overlay = wrapper.querySelector('.ws-overlay');
         this.wavesurfer.play(0);
         this.lyricDisp.play(0);
+        if (overlay.style.display == 'block') {
+          overlay.style.display = 'none';
+        }
+      };
+      if (this.option.loop) {
+        replay();
       } else {
-        //TODO REPLAY BUTTON.
+        // const overlay = wrapper.querySelector('.ws-overlay');
+        // overlay.style.display = 'block';
+        // overlay.querySelector('#replay').onclick = () => replay();
       }
       if (this.stats && this.stats.reset) this.stats.reset(true);
     })
@@ -385,6 +402,10 @@ class Player {
   async init() {
     if (!this.userOption) throw new ReferenceError('userOption is not Object.');
     this.initAudio.bind(this)();
+    document.querySelector('.optionTab img#setting').onclick = () => {
+      document.querySelector('.eqmodules').classList.toggle('hide');
+    }
+
     window.Player = this;
     return this;
   }

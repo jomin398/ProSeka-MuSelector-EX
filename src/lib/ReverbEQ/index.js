@@ -55,7 +55,23 @@ export default class ReverbEQ extends Reverb {
             }
             this.element.querySelector('.controls').appendChild(el);
         });
+        this.#addCssOnHeader();
         return this;
+    }
+    #reverbCssUrl = './src/lib/ReverbEQ/reverb.css';
+    #knobCssUrl = './src/lib/flstudioKnob/knob.min.css';
+    #addCssOnHeader() {
+        function urlOnhead(url) {
+            return document.head.querySelector(`link[href="${url}"]`) != null;
+        }
+        function addCss(url) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = url;
+            document.head.appendChild(link);
+        }
+        if (!urlOnhead(this.#reverbCssUrl)) addCss(this.#reverbCssUrl);
+        if (!urlOnhead(this.#knobCssUrl)) addCss(this.#knobCssUrl);
     }
     get isEnable() {
         return this.powerElm?.checked ?? false;
