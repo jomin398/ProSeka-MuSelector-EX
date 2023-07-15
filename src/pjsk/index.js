@@ -159,7 +159,7 @@ export default class PJSK {
             song = ((o, temp) => {
                 const root = 'https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/';
                 const level = temp.cloneNode(true);
-
+                const Encode =s => encodeURIComponent(s);//.replace(/%20/g, '+');
                 let { n, f, lrc, atrys, tags, artist, maker, m, album, another, image } = o;
                 const elems = {
                     img: level.querySelector('img'),
@@ -215,14 +215,14 @@ export default class PJSK {
                         this.#searchEngine.handleSearch();
                     };
                     if (m) m.filter(e => e.endsWith('.lrc')).map((e, i) => {
-                        elems.audioUrl.value += `&lrc${i}=${root}${e}`;
+                        elems.audioUrl.value += `&lrc${i}=${root}${Encode(e)}`;
                     });
 
                     elems.tags.append(tagElm);
                 }
                 if (m && m.filter(e => e.endsWith('.mp3'))) {
                     let aurls = m.filter(e => e.endsWith('.mp3'))
-                    aurls = aurls.map((e, i) => `&au${i}=${root}${e}`);
+                    aurls = aurls.map((e, i) => `&au${i}=${root}${Encode(e)}`);
                     elems.audioUrl.value += aurls.join("");
                 }
                 return level;

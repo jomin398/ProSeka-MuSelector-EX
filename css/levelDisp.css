@@ -78,7 +78,7 @@
 
 @media screen and (max-width:426px) {
     .container .left img {
-        width: 320px;
+        width: 280px;
     }
 }
 
@@ -88,8 +88,8 @@
     }
 
     .container .left img {
-        max-width: 260px;
-        max-height: 260px;
+        max-width: 240px;
+        max-height: 240px;
     }
 }
 
@@ -97,7 +97,8 @@
 @media screen and (min-width: 1024px) {
     .container .left img {
         width: auto;
-        max-width: 50%;
+        max-width: 380px;
+        max-height: 380px;
         min-width: unset;
         min-height: unset;
         object-fit: initial;
