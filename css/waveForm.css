@@ -1,5 +1,6 @@
 .waveform {
     min-height: 110px;
+    position: relative;
 }
 
 .waveform:focus {

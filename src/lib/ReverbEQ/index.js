@@ -55,7 +55,7 @@ export default class ReverbEQ extends Reverb {
             }
             this.element.querySelector('.controls').appendChild(el);
         });
-        this.#addCssOnHeader();
+        // this.#addCssOnHeader();
         return this;
     }
     #reverbCssUrl = './src/lib/ReverbEQ/reverb.css';

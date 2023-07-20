@@ -5,6 +5,7 @@ import { MetaDataExtract } from "lib/MetaDataExtract.js";
 import Stats from "lib/stats.js";
 import { themeSetting } from "./themeSetting.js";
 import ReverbEQ from "./src/lib/ReverbEQ/index.js";
+import { omakaseSongs } from "./src/omakaseSongs.js";
 // Event listener for file input change
 await new Promise(r => window.onload = () => r(true));
 
@@ -334,11 +335,13 @@ class Player {
 
     await this.replaceSong({ musicName, musicRootPath, lrcRootPath, lrcFileName }, this.option.theme);
     this.wavesurfer.renderer.parent.classList.toggle('focus');
-    const wrapper = this.wavesurfer.getWrapper();
+    const wrapper = document.querySelector('.waveform');
     if (!wrapper.querySelector('.ws-overlay')) {
       const overlay = document.createElement('div');
       overlay.className = 'ws-overlay';
-      overlay.innerHTML = `<img id="replay" src="./replay.svg" alt="replay" width="50" height="50"/>`;
+      overlay.innerHTML = `<img id="replay" src="./replay.svg" alt="replay" width="50" height="50"/>
+      <img id="root" src="./root.svg" alt="replay" width="50" height="50" style="background-color: white;"/>`;
+      wrapper.appendChild(overlay);
       Object.assign(overlay.style, {
         position: 'absolute',
         inset: 0,
@@ -346,18 +349,15 @@ class Player {
         zIndex: 9,
         opacity: 0.8,
         display: 'none',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        flexDirection: 'row'
       })
 
       Object.assign(overlay.querySelector('img').style, {
-        position: 'absolute',
-        inset: 0,
         zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row'
-      })
-      wrapper.appendChild(overlay);
+        backgroundColor: 'white'
+      });
     }
     this.wavesurfer.once('interaction', () => {
       this.wavesurfer.renderer.parent.classList.toggle('focus');
@@ -374,16 +374,24 @@ class Player {
         const overlay = wrapper.querySelector('.ws-overlay');
         this.wavesurfer.play(0);
         this.lyricDisp.play(0);
-        if (overlay.style.display == 'block') {
+        if (overlay.style.display == 'flex') {
           overlay.style.display = 'none';
         }
       };
       if (this.option.loop) {
         replay();
       } else {
-        // const overlay = wrapper.querySelector('.ws-overlay');
-        // overlay.style.display = 'block';
-        // overlay.querySelector('#replay').onclick = () => replay();
+        const overlay = wrapper.querySelector('.ws-overlay');
+        Object.assign(overlay.style, {
+          display: 'flex',
+        })
+        overlay.querySelector('#root').onclick = () => {
+          const a = document.createElement('a');
+          a.href = './index.html';
+          a.target = '_top';
+          a.click();
+        };
+        overlay.querySelector('#replay').onclick = () => replay();
       }
       if (this.stats && this.stats.reset) this.stats.reset(true);
     })
@@ -430,7 +438,7 @@ Player.replaceSong({
 class Main {
   constructor() {
   }
-  #defaultQueryStr = `&au0=https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/Secret base 〜君がくれたもの〜/Secret base.mp3&au1=https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/Secret base 〜君がくれたもの〜/Secret base - 설레임%26쁘띠허브.mp3&au2=https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/Secret base 〜君がくれたもの〜/Secret base - Team 아리아.mp3`;
+  #defaultQueryStrs = omakaseSongs;
   async popup(res) {
     const container = document.querySelector('.eqmodules');
     const assetRoot = 'https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios';
@@ -513,12 +521,14 @@ class Main {
                 progressColor: '#383312',
               }
             };
+            Object.assign(obj, {
+              lrcRootPath: `${assetRoot}/${lastFolderName}/`,
+              lrcFileName: fileName.replace(/\.\w{3}$/g, '')
+            })
             if (lrcPath) {
               const { lastFolderName, fileName } = lrcPath;
-              Object.assign(obj, {
-                lrcRootPath: `${assetRoot}/${lastFolderName}/`,
-                lrcFileName: fileName.replace(/\.\w{3}$/g, '')
-              })
+              obj.lrcRootPath = `${assetRoot}/${lastFolderName}/`;
+              obj.lrcFileName = fileName.replace(/\.\w{3}$/g, '');
             }
 
             resetElm(container)
@@ -554,7 +564,7 @@ class Main {
       return new DOMParser().parseFromString(`
     ${htmlStr ??= ''}`, 'text/html').body.firstElementChild;
     }
-
+    const pick = this.#defaultQueryStrs[Math.floor(Math.random() * this.#defaultQueryStrs.length)];
     const Obj = getQueryString(search);
     removeQueryParams();
 
@@ -570,7 +580,7 @@ class Main {
     })
     if (!Obj || Object.keys(Obj).length === 0) {
       console.warn('Please select');
-      const qs = this.#defaultQueryStr.slice(1);
+      const qs = pick;
       const defaultOptionElms = [
         Template2Dom(`<h3>Please select</h3>`),
         Template2Dom(`<a href="./index.html?referrer=./player.html" target="_top" ><button class="sekai-button decide">Go Back to Playlist</button></a>`),

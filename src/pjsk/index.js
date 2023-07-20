@@ -288,7 +288,17 @@ export default class PJSK {
             return { n: name, f, lrc, atrys, tags, artist, maker, m, album, another, image };
         });
         this.levelData = db;
-        ls.appendChild(this.#genItemElem(true))
+        const top = this.#genItemElem(true);
+        top.classList.add('first');
+        const taile = this.#genItemElem(true);
+        taile.innerHTML = `<button class="sekai-button decide">More?</button>`;
+        taile.querySelector('.decide').onclick = () => {
+            this.addlevel();
+            this.#resetScroll(null, true);
+        }
+        taile.classList.add('latest');
+
+        ls.appendChild(top)
         this.addlevel();
         console.log(this.lastLVDataRead)
         this.musicTags = [...new Set(db.map(e => e.tags?.flat() ?? null).flat().filter(e => e))];
@@ -301,8 +311,7 @@ export default class PJSK {
             };
             document.querySelector('.tagsContainer').append(tagElm)
         })
-        let taile = this.#genItemElem(true);
-        taile.classList.add('latest');
+
         ls.appendChild(taile)
     };
     /**
@@ -372,7 +381,7 @@ export default class PJSK {
 
             for (let e = 0; e < t.length; e++) {
                 t[e].classList.remove("selected");
-                if (e === l && t[e].innerHTML != '') {
+                if (e === l && (e != 0 || e == t.length - 1)) {
                     t[e].classList.add("selected");
                     idx = e;
                     if (cb) cb(idx, top, t[e]);
@@ -389,6 +398,10 @@ export default class PJSK {
         e.addEventListener("scroll", scroll);
         this.#scrollHandleEnable = true;
         g2t();
+        if (t.length - 2 == this.musicData.d.length) {
+            let b = document.querySelector('#list .latest .sekai-button.decide');
+            if (b) b.remove();
+        }
     }
     #rngScroll() {
         const list = document.querySelector(".listCont #list");  // Get the element with the ID "list"
@@ -415,7 +428,7 @@ export default class PJSK {
         let artist = elm.querySelector('.artist');
         const img = elm.querySelector('img');
         coverWrap.querySelector('img').src = img ? img.src : '';
-        if (elm.innerHTML != '') {
+        if (!(elm.classList.contains('first') || elm.classList.contains('latest'))) {
             const selectedUrl = elm.querySelector('input[name=audioUrl]').value;
             coverWrap.querySelector('.album span').innerText = album.innerText;
             coverWrap.querySelector('.artist').innerHTML = '';
